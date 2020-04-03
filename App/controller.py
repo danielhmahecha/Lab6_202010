@@ -93,6 +93,12 @@ def loadData (catalog):
     loadBooks(catalog)    
 
 # Funciones llamadas desde la vista y enviadas al modelo
+def getAccidentsBeforeDate(catalog, date):
+    t1_start = process_time()
+    counter = model.getAccidentsBeforeDate (catalog, date)
+    t1_stop = process_time()
+    print('Tiempo de ejecución consultar accidentes antes de fecha: ',t1_stop-t1_start,' segundos')
+    return counter
 
 def getAccidentsByDateRange(catalog, dates):
     t1_start = process_time()
@@ -107,6 +113,14 @@ def getAccidentByDateSeverity (catalog, date):
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución consultar accidentes por fecha:",t1_stop-t1_start," segundos")   
     return resp
+
+def getAccidentsByDateState (catalog, date):
+    t1_start = process_time() #tiempo inicial
+    resp = model.getAccidentsByDateState(catalog, date)
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución consultar estado con más accidentes por fecha:",t1_stop-t1_start," segundos")   
+    return resp
+
 def rankseverityMap (catalog, Accident_Date):
     rank = model.rankseverityMap(catalog,Accident_Date)
     return rank

@@ -27,6 +27,7 @@ from ADT import map as map
 from ADT import list as lt
 from DataStructures import listiterator as it
 from datetime import datetime
+from datetime import timedelta
 
 """
 Se define la estructura de un catálogo de libros.
@@ -67,12 +68,13 @@ def newDate_severity(date,row):
     intSeverity = int(row['Severity'])
     map.put(dateNode['severityMap'],intSeverity,1, compareByKey)
     return dateNode
+
 def newDate_state(date,row):
 
     stateNode = {"date": date, "stateMap":None}
-    stateNode ['severityMap'] = map.newMap(29,maptype='CHAINING')
+    stateNode ['stateMap'] = map.newMap(29,maptype='CHAINING')
     state = row['State']
-    map.put(stateNode['severityMap'],state,1, compareByKey)
+    map.put(stateNode['stateMap'],state,1, compareByKey)
     return stateNode
 
 
@@ -122,7 +124,25 @@ def addDateTrees (catalog, row):
 
 # Funciones de consulta
 
-
+def getAccidentsBeforeDate(catalog, date):
+    """
+    """
+    earlyDate = '2015-12-01'
+    startDate = strToDate(earlyDate,'%Y-%m-%d')
+    endDate = strToDate(date,'%Y-%m-%d') - timedelta(days=1)
+    dateList = tree.valueRange(catalog['dateTree'], startDate, endDate, greater)
+    iteraDates = it.newIterator(dateList)
+    total = 0
+    while it.hasNext(iteraDates):
+        dateElement = it.next(iteraDates)
+        if dateElement:
+            ratingList = map.keySet(dateElement['severityMap'])
+            iteraRating=it.newIterator(ratingList)
+            while it.hasNext(iteraRating):
+                ratingKey = it.next(iteraRating)
+                count = map.get(dateElement['severityMap'],ratingKey,compareByKey)
+                total += int(count)
+    return total
 
 def getAccidentByDateSeverity (catalog, date):
     """
@@ -131,15 +151,17 @@ def getAccidentByDateSeverity (catalog, date):
     
     dateElement = tree.get(catalog['dateTree'], strToDate(date,'%Y-%m-%d') , greater)
     response=''
+    total = 0
     if dateElement:
         ratingList = map.keySet(dateElement['severityMap'])
         iteraRating=it.newIterator(ratingList)
         while it.hasNext(iteraRating):
             ratingKey = it.next(iteraRating)
-            print(ratingKey)
-            response += 'Severidad '+str(ratingKey) + ': ' + str(map.get(dateElement['severityMap'],ratingKey,compareByKey)) + 'accidentes'+'\n'
-        return response
-    return None
+            #print(ratingKey)
+            response += 'Severidad '+str(ratingKey) + ': ' + str(map.get(dateElement['severityMap'],ratingKey,compareByKey)) + ' accidentes'+'\n'
+            total += map.get(dateElement['severityMap'],ratingKey,compareByKey)
+        print (response)
+    return total
 
 def getAccidentsByDateRange (catalog, dates):
     
@@ -174,6 +196,28 @@ def getAccidentsByDateRange (catalog, dates):
         
     return response
 
+def getAccidentsByDateState (catalog, date):
+    """
+    Retorna la cantidad de libros para un año y con un rating dado
+    """
+    
+    dateElement = tree.get(catalog['statesTree'], strToDate(date,'%Y-%m-%d') , greater)
+    response=None
+    mayor = 0
+    worse = None
+    if dateElement:
+        statesList = map.keySet(dateElement['stateMap'])
+        iteraStates=it.newIterator(statesList)
+        while it.hasNext(iteraStates):
+            stateKey = it.next(iteraStates)
+            #print(ratingKey)
+            #response += 'Severidad '+str(ratingKey) + ': ' + str(map.get(dateElement['severityMap'],ratingKey,compareByKey)) + ' accidentes'+'\n'
+            count = map.get(dateElement['stateMap'],stateKey,compareByKey)
+            if count > mayor:
+                mayor = count
+                worse = stateKey
+    response = [worse,mayor]
+    return response
 
 def rankseverityMap (catalog, DateAccident):
     fecha = strToDate(DateAccident,'%Y-%m-%d') 

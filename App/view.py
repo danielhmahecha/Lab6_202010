@@ -44,6 +44,7 @@ def printMenu():
     print("2- Total de accidentes antes de una fecha(req 1)")
     print("3- Total de accidentes en una fecha reportando cuantos de cada severidad(req 2 )")
     print("4- Consultar accidentes, por ciudad, en un rango de fechas(req 3)")
+    print("5- Consultar estado con más accidentes, en una fecha específica (req 4)")
     print("0- Salir")
 
 
@@ -80,16 +81,16 @@ def main():
             print ('Altura árbol por fecha: ' + str(map.height(catalog['dateTree'])))
         elif int(inputs[0])==2:
             date = input("Fecha del accidente (YYYY-MM-DD): ")
-            accident_rank = controller.rankseverityMap(catalog, date)
-            if accident_rank:
-                print("Hay ", accident_rank, " accidentes en fechas menores a " + date )
+            counter = controller.getAccidentsBeforeDate(catalog, date)
+            if counter > 0 :
+                print("Hay ", counter, " accidentes en fechas menores a " + date )
             else:
-                print("Fecha fuera de limites: ",accident_rank)
+                print("Fecha fuera de limites: ",date)
         elif int(inputs[0])==3:
             date = input("Ingrese la fecha a consultar (YYYY-MM-DD): ")
             response = controller.getAccidentByDateSeverity(catalog,date)
-            if response:
-                print(response)
+            if response > 0:
+                print( 'Total de accidentes para dicha fecha:',response)
             else:
                 print("No se encontraron accidentes para esta fecha",date) 
         elif int(inputs[0])==4:
@@ -99,6 +100,13 @@ def main():
                 print("Cantidad de accidentes entre las fechas por ciudad",dates,":",counter)
             else:
                 print("No se encontraron accidentes para el rango de fechas",dates) 
+        elif int(inputs[0])==5:
+            date = input("Ingrese una fecha (YYYY-MM-DD): ")
+            resp = controller.getAccidentsByDateState(catalog, date) 
+            if resp:
+                print("\nEstado con más accidentes en la fecha",date,": ",resp[0], ", con ",resp[1]," accidentes\n")
+            else:
+                print("No se encontraron accidentes en esa fecha",date) 
         else:
             sys.exit(0)
     sys.exit(0)
