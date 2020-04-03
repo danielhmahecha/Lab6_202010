@@ -30,6 +30,7 @@ from ADT import orderedmap as tree
 from DataStructures import listiterator as it
 from Sorting import mergesort as sort
 from time import process_time
+from datetime import datetime
 
 
 """
@@ -46,10 +47,6 @@ def printList (lst):
         result = "".join(str(key) + ": " + str(value) + ",  " for key, value in element.items())
         print (result)
 
-
-
-def compareratings (movie1, movie2):
-    return ( float(movie1['vote_average']) > float(movie2['vote_average']))
 
 
 # Funciones para la carga de datos 
@@ -73,7 +70,7 @@ def loadBooks (catalog, sep=','):
             #model.addBookTree(catalog, row)
             # Se adiciona el libro al mapa de años y rating (key=year)
             #model.addYearTree(catalog, row)
-            model.addDateTree(catalog,row)
+            model.addDateTrees(catalog,row)
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución carga libros:",t1_stop-t1_start," segundos")   
 
@@ -97,49 +94,19 @@ def loadData (catalog):
 
 # Funciones llamadas desde la vista y enviadas al modelo
 
-
-def getBookTree(catalog, bookTitle):
-    t1_start = process_time() #tiempo inicial
-    #book=model.getBookInList(catalog, bookTitle)
-    book=model.getBookTree(catalog, bookTitle) 
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución buscar libro:",t1_stop-t1_start," segundos")   
-    if book:
-        return book
-    else:
-        return None
-
-def rankBookTree(catalog, bookTitle):
-    t1_start = process_time() #tiempo inicial
-    rank=model.rankBookTree(catalog, bookTitle)  
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución buscar libro (rank):",t1_stop-t1_start," segundos")   
-    return rank
-
-def selectBookTree(catalog, pos):
-    t1_start = process_time() #tiempo inicial
-    rank=model.selectBookTree(catalog, pos) 
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución buscar libro (rank):",t1_stop-t1_start," segundos")   
-    return rank
-
-def getBookByYearRating (catalog, year):
-    t1_start = process_time() #tiempo inicial
-    resp = model.getBookByYearRating(catalog, year)
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución consultar libros por año:",t1_stop-t1_start," segundos")   
-    return resp
-    
-def getBooksCountByYearRange (catalog, years):
-    t1_start = process_time() #tiempo inicial
-    counter = model.getBooksCountByYearRange(catalog, years)
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución consultar libros por rango de años:",t1_stop-t1_start," segundos")   
-    return counter
-
 def getAccidentsByDateRange(catalog, dates):
     t1_start = process_time()
     counter = model.getAccidentsByDateRange (catalog, dates)
     t1_stop = process_time()
     print('Tiempo de ejecución consultar accidentes por rango de fechas: ',t1_stop-t1_start,' segundos')
     return counter
+
+def getAccidentByDateSeverity (catalog, date):
+    t1_start = process_time() #tiempo inicial
+    resp = model.getAccidentByDateSeverity(catalog, date)
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución consultar accidentes por fecha:",t1_stop-t1_start," segundos")   
+    return resp
+def rankseverityMap (catalog, Accident_Date):
+    rank = model.rankseverityMap(catalog,Accident_Date)
+    return rank

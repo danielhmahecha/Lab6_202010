@@ -41,9 +41,9 @@ operación solicitada
 def printMenu():
     print("Bienvenido al Laboratorio 6")
     print("1- Cargar información")
-    print("2- Consultar accidentes, por ciudad, en un rango de fechas")
-
-
+    print("2- Total de accidentes antes de una fecha(req 1)")
+    print("3- Total de accidentes en una fecha reportando cuantos de cada severidad(req 2 )")
+    print("4- Consultar accidentes, por ciudad, en un rango de fechas(req 3)")
     print("0- Salir")
 
 
@@ -73,13 +73,27 @@ def main():
             print("Recursion Limit:",sys.getrecursionlimit())
             catalog = initCatalog ()
             loadData (catalog)
-            #print ('Tamaño Lista libros cargados: ' + str(lt.size(catalog['booksList'])))
-            #print ('Tamaño árbol Libros por titulo: ' + str(map.size(catalog['booksTitleTree'])))
+            print ('Tamaño árbol usado para ciudades: ' + str(map.size(catalog['cityTree'])))
+            print ('Tamaño árbol usado para estados: ' + str(map.size(catalog['statesTree'])))
             print ('Tamaño árbol accidentes por fecha : ' + str(map.size(catalog['dateTree'])))
-            #print ('Altura árbol por titulo: ' + str(map.height(catalog['booksTitleTree'])))
+            print ('Altura árbol usado para ciudades: ' + str(map.height(catalog['cityTree'])))
             print ('Altura árbol por fecha: ' + str(map.height(catalog['dateTree'])))
         elif int(inputs[0])==2:
-            dates = input("Ingrese los las fechas desde y hasta (YYYY-MM-DD YYYY-MM-DD):")
+            date = input("Fecha del accidente (YYYY-MM-DD): ")
+            accident_rank = controller.rankseverityMap(catalog, date)
+            if accident_rank:
+                print("Hay ", accident_rank, " accidentes en fechas menores a " + date )
+            else:
+                print("Fecha fuera de limites: ",accident_rank)
+        elif int(inputs[0])==3:
+            date = input("Ingrese la fecha a consultar (YYYY-MM-DD): ")
+            response = controller.getAccidentByDateSeverity(catalog,date)
+            if response:
+                print(response)
+            else:
+                print("No se encontraron accidentes para esta fecha",date) 
+        elif int(inputs[0])==4:
+            dates = input("Ingrese los las fechas desde y hasta (YYYY-MM-DD YYYY-MM-DD): ")
             counter = controller.getAccidentsByDateRange(catalog, dates) 
             if counter:
                 print("Cantidad de accidentes entre las fechas por ciudad",dates,":",counter)
